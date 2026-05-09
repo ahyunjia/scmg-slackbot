@@ -63,8 +63,8 @@ def delete_alert(ts: str):
 
 def check_timestamp():
     # Fetch data from API
+    print(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}]")
     send_alert(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}]\n🦦 Running daily check...")
-    print(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}] 🦦 Running daily check...")
     stale_sensors = []
 
     for site in SITES:
@@ -82,7 +82,7 @@ def check_timestamp():
     if len(stale_sensors) == 0:
         send_alert("All the sensors look good!")
     else:
-        send_alert(f"There are (${len(stale_sensors)}) sensors that haven't updated in the past 2 hours:\n" + '\n'.join(stale_sensors))
+        send_alert(f"There are {len(stale_sensors)} sensors that haven't updated in the past 2 hours:\n• " + '\n• '.join(stale_sensors))
 
     # # Extract timestamp field
     # raw_timestamp = get_nested_field(data, TIMESTAMP_FIELD)
