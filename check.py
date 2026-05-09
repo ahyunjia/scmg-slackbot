@@ -63,9 +63,9 @@ def delete_alert(ts: str):
 
 def check_timestamp():
     # Fetch data from API
-    send_alert(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}] 🌅 Running morning check...")
-    print(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}] 🌅 Running morning check...")
-    empty_sensors = []
+    send_alert(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}]\n🦦 Running daily check...")
+    print(f"[{datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).replace(microsecond=0)}] 🦦 Running daily check...")
+    stale_sensors = []
 
     for site in SITES:
         try:
@@ -74,15 +74,15 @@ def check_timestamp():
             response.raise_for_status()
             data = response.json()
             if not len(data):
-                empty_sensors.append(site['label'])
+                stale_sensors.append(site['label'])
         except requests.RequestException as e:
             send_alert(f":x: *API Request Failed*\nCould not reach `{API_URL}`\n*Error:* {e}")
             return
 
-    if len(empty_sensors) == 0:
+    if len(stale_sensors) == 0:
         send_alert("All the sensors look good!")
     else:
-        send_alert("These are the sensors that haven't been updated for the past 2 hours: \n" + '\n'.join(empty_sensors))
+        send_alert(f"There are (${len(stale_sensors)}) sensors that haven't updated in the past 2 hours:\n" + '\n'.join(stale_sensors))
 
     # # Extract timestamp field
     # raw_timestamp = get_nested_field(data, TIMESTAMP_FIELD)
